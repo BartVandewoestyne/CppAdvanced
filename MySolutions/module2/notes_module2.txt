@@ -1,0 +1,29 @@
+Module 2
+--------
+5: throw by value, catch by reference.
+
+6: you throw an exception, stack is being cleaned up, and if you then throw another exception, that is bad...
+   destructors shouldn't fail. (you can log it, but destructur must finish successfully)
+
+11: during destruction, an object is not considered to be alive!
+
+25: noexcept is some kind of thing you can use so that no exception code is being generated.
+    it can be that you write noexcept because you thought no exceptions could occur in your function, but that there *are* functions that throw... so you could be lying.
+    It's a kind of optimization...
+
+37: is still the no guarantee because push_back can still throw.
+
+57: documentation of multiset::insert() will somewhere mention the strong guarantee.
+
+70: copy/swap idiom
+
+71: oldschool style.
+    it's a situation that cannot be rolled back, but it's not exception safe
+
+102: notice the noexcept, that move operator will never throw an exception
+
+Questions:
+109: what if s or r are const.  Can you move them?
+
+Vragen:
+slide 129/130 (wanneer wordt het geïnitialiseerd)? => het zal wschl op de juiste plaats geïnitialiseerd worden

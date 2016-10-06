@@ -1,0 +1,44 @@
+6: cout is unsafe resource (shared between threads)
+
+8: threads have a bit the same reputation as goto's now?
+
+12: Ewout don't think we should be using async.
+future will be empty as long as the work hasn't finished, and you can query it
+to see if a value has been produced, or use a blocking function to wait for a
+result.  You promise to deliver something in the future.
+async might or might now launch a thread.
+not good enough in the sense that you have very little control over where and when it executes?
+https://bartoszmilewski.com/2011/10/10/async-tasks-in-c11-not-quite-there-yet/
+http://stackoverflow.com/questions/26372904/what-limitation-of-stdasync-is-stroustrup-referring-to
+https://dzone.com/articles/the-promises-and-challenges-of-stdasync-task-based
+
+16: that is an exception safe situation
+  you could have exception between lock and unlock.
+  acquiring lock fals under RAII!  So use lock_guard!
+
+19: C++ Concurrency in Action, good book, Anthony Williams excellent speaker.
+Interesting article by Herb Sutter: Lock Hierarchies
+
+20: smaller critical section is better?
+try not to call other functions from your critical section.
+
+21: avoid locking at all using atomics.
+
+23: condition_variable to wait for something that might happen
+wait might wakeup for no reason (when no-one notified it)
+'looks like a monkey's ass'...
+
+26: every thread that gets started will get a local copy of that variable
+best example: strtok and errno.
+
+Strings
+-------
+
+Iterators
+---------
+51: no state in the readlines
+
+Variadic Templates
+------------------
+not really for the industry...?
+68: you could take the size of the parameter pack to stop the recursion.

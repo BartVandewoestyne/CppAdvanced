@@ -1,0 +1,42 @@
+Nothing here.
+
+Performance
+-----------
+PIMPL => for classes that are used a lot in your codebase.
+Don't do it for every class, but for the classes that have the biggest impact on your compilation slowdown.
+
+58: you 're casting to yourself.
+CRTP: you can use it where the price of polymorphism is high, to do devirtualization, static polymorphism (see Alexandrescu's Modern C++ Design)
+Technical report on C++ performance
+
+88: how many times is xxx copied?
+
+96: presentations that show how the caches are used (Herb Sutter?)
+
+101: you need support for you hardware, your cache has to be able to tell how much cache misses
+     you had.  perf on linux
+
+102: Ulrich Drepper (what every programmer should know about memory)
+     Keynote Bjarne Stroustrup about list vs vector/array?
+     Meyers, Alexandrescu
+
+103: General purpose heap is not the same as 15 years ago.
+
+109: EASTL from the game industry
+     Colony data structure
+
+124: Picanol in Ieper uses code hoisting.
+     (Mathieu)
+
+127: there are libraries that give us pools (e.g. Boost)
+
+128: creating objects at certain memory locations
+     reinterpret_cast => often used in template embedded microcontroller programming
+
+134: Real-Time C++: Efficient Object-Oriented and ... is a very good book!
+     Eye-opener!  Book with schematics, 
+
+
+C++17
+-----
+40: Alexandrescu has nice talk about modern allocators.

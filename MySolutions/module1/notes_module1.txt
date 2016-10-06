@@ -1,0 +1,207 @@
+Avionics (Ignace, Paulo, Edwin, Peter Mortier): (Ada) C -> C++
+C++ Driver code for OpenGL
+
+Stijn Gevels, Bruno Titeca: Defence & ATC (rugged), already using C++ all the time (over 10 years, wants to use newest standard)
+Frank Vieren (C++, trying to catch up)
+Wim Coens (1st day, Qt/C++ in former job)
+Dominique Arnout (get acquinted with latest C++ standards)
+
+Intro
+-----
+11: C++ in embedded context is based on paper written 10 years ago.
+
+17: Parallelism: parallel stl algorithms
+    Sunday sessions (organizer of CppCon)?
+
+22: Don't use using in your headers!!!
+    (always use fully qualified name, to avoid name clashes)
+
+24: two implementations of modules already exist (C++20?)
+
+26: prefer cherry-picking individual symbols from a namespace, prefer not to
+    use the general form.
+
+27: don't nest your namespaces too deep!
+
+31: 'The interface principle' is article of Herb Sutter (guru of the week)
+    If you have functions that logially belong to a type, put them in the
+    same namespace. (otherwise compiler doesn't know what to do)
+    (no new advice, already exists for about 15-20 years)
+
+35: alignas, alignof probably more interesting for embedded
+
+39: see Jason Turner's presentation on Commodore 64.
+
+40: sum of two things that are known at compile time is also const.
+    See it happening using -s option of gcc (or use online compiler to see
+    assembly output)
+
+41: recursion often a good candiate for constexpr.
+    C++14 allows recursion in constexpr.
+    constexpr is also a good alternative for macro's, and as such improves
+    type safety and readability.
+
+46: for const, there is 'const auto it' or cbegin().
+
+52: C++14: you don't have to specify the return type anymore.
+    Imagine you have a template, and you don't know what you might be
+    returning...
+    You need to put it in the header, it needs to see the definition of your
+    function.
+
+53: ambiguity, it cannot make a decision for you.
+
+59: Imagine you write a template, and you have some member variable (Foo::X)
+    which is dependent on what you gave as a type parameter.  Type of y is
+    dependent on Foo::X. => very useful for writing templates.
+    value_type, ... typedefs (see C++98) no longer necessary.
+    Also useful while refactoring/code maintenance (you would forget to
+    update the other one).  If y always has to be the same type as Foo::X, use
+    decltype.
+
+60: you can't predict the return type.  decltype solves it smoothly.
+
+63: typo in operator= (no space)
+    Compiler will give you better error "you're using this function which is
+    explicitly deleted".
+
+64: already existed in C++11 (98?)
+    you can just make more stuff explicit now.
+
+66: assigning number to driver object makes no real sense...
+    number gets converted to driver first, and then Driver assigned to a Driver.
+    (implicit conversion)
+    explicit is a design tool, you use it to improve the semantics of your type.
+    Often, you will combine explicit with delete.
+
+71: that macro isn't even usable in C++.
+
+74: recipe from old book of Scott Meyers how you would cook such a thing
+    yourself.
+    zero-overhead abstraction
+
+76: say you have a class used in single-threaded constext that is const-correct.
+    Then you want to use it in multi-threaded context.  Don't throw away the
+    const but declare the mutex/lock to be mutable!
+    Use mutable for
+       1. members that do not contribute to the business logic/state of your
+          object.
+       2. or e.g. use it for instrumentation for testing or monitoring.
+       3. ???
+       4. for the things that you have to do, the other things than the core
+          business of your class.
+
+77: sometimes, you *must* use typename.
+
+91: it makes no sense to derive from std containers
+    final is maybe not always a good thing (sometimes it is for design
+    decisions)
+    One argument for final is that it allows for generating more efficient
+    code (no more need to lookup stuff in vtable etc). => but there is also
+    whole program optimization.
+
+97: In C++11, there are three ways of calling something:
+      -> regular functions, compiled and linked
+      -> function objects (=> easier with lambda's, but still applicable)
+      -> lambda's
+
+99: functors useful if you need to bind information to a function
+    std::bind deprecated by the committee.
+
+103: template functions taking callbacks (Func is the callback).
+     you can put in a function pointer, a lambda or a functor (all callables)
+
+104: why wrap for example plus in a functor => to play 'functor lego' and
+     combine them.
+
+105: UnaryPredicate is callback that takes one argument and returns true or
+     false.
+     At configuration time you pass "Foo", and at invocation time you pass
+     another parameter.
+
+110: you use 'functor lego' here!  Cool stuff to build things yourself.
+     unary_negate is C++11/14?  not1 is C++17?
+
+113: a function pointer can never be inlinded, but functors can (if they are
+     trivial)!
+
+115: you can overload new for all types or for a certain type.
+     115 => to overwrite standard implementation of the operator.
+     for embedded people it might make sense to overload operator new.
+
+117: global = interesting for debugging etc
+     class-specific: most interesting for us
+
+121: placement new 
+     new(mem) Foo() => new gets more parameters!
+     It's about newing an object on a memory location you decide.
+     E.g. you want to instantiate a driver object on that object and immediately
+     initialize the registers on that object. (e.g. you know that there is
+     some hardware at those specific addresses).
+
+125: zeroing out 
+
+128: if you redirect to your own memory pool, delete also must use that pool,
+     otherwise undefined.
+
+137: interesting for embedded development that you can choose the underlying
+     type.
+
+139: Alexandrescu's book was one of the first to describe smartpointers.
+
+144: https://herbsutter.com/2013/05/29/gotw-89-solution-smart-pointers/
+
+146: Fedor Pikus -> lock free programming
+
+147: you always need to get a weak_ptr from a shared_ptr
+
+160: as soon as you have a weak pointer that points to something that is no
+     longer alive, delete/null the weak_ptr???
+
+167: std::array is really cool with zero-overhead abstraction.
+
+171: note the freestanding begin() and end().
+     algorithms now also work on naked arrays because of these free-standing
+     functions.  'begin and end of something that is iterable'.
+     (arrays *have* no begin and end)
+
+182: compiler picks an internal type for the lambda.
+     anonymous function without a capture and giving it a name => sounds like
+     a regular function...
+
+184: it's a static array
+     vector was always allocating on the heap, std::array can be used anywhere.
+
+185: assignment was not necessary, maybe it was better to leave it out.
+     note that you can ask for the size() of the array!
+
+186: they do not decay to pointers automatically, you have to ask for it
+     explicitly.
+
+188: tuple can be an alternative to return multiple things from a function.
+
+189: the get<1>(x) is ugly, there will be a nicer syntax to bind elements of a
+     tuple in the future.
+     Return a tuple to indicate whether a function failed or not.
+     There is also std::optional
+
+192: constexpr is not an obligation, the clue is in the operator "".
+
+194: strings have heap allocations
+     you could put constexpr there, but nothing would happen at compile time
+     but silently at runtime.
+
+Vragen:
+-------
+* Tools to modernize (clang-modernize?)
+
+Check:
+------
+* Kan je using gebruiken bij enum classes?
+* Wat als je shared_ptr maakt naar een adres van een member van een class?
+  => shared_ptr's should only be made of other shared_ptr's or new.
+* lambda capture list
+* what was rationale for not having binary literals in C?
+  http://stackoverflow.com/questions/18244726/why-doesnt-c-have-binary-literals
+
+Tom Deseyn
